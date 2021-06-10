@@ -92,7 +92,7 @@ impl GenericClient for Client {
 impl GenericClient for DpClient {
     #[deny(unconditional_recursion)]
     async fn prepare(&self, sql: &str) -> Result<Statement, SqlError> {
-        DpClientWrapper::prepare(self, sql).await
+        DpClientWrapper::prepare_cached(self, sql).await
     }
 
     #[deny(unconditional_recursion)]
