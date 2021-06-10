@@ -64,6 +64,21 @@ impl<'a> Query<'a> {
         Ok(value)
     }
 
+    /// Execute this query and return the resulting value or return None if no value is found.
+    /// This method will return an error if more than one row was returned by the query.
+    pub async fn fetch_opt<T, C>(&self, client: &C) -> Result<Option<T>>
+    where
+        T: FromSqlRow,
+        C: GenericClient + Sync,
+    {
+        self.query_opt(client).await.and_then(|row_opt| {
+            row_opt
+                .map(|row| T::from_row(&row).map_err(Error::from))
+                .transpose()
+                .map_err(Into::into)
+        })
+    }
+
     /// Execute this query and return the resulting values as an asynchronous stream of values.
     pub async fn fetch_streaming<T, C>(&self, client: &C) -> Result<impl Stream<Item = Result<T>>>
     where
@@ -121,6 +136,32 @@ impl<'a> Query<'a> {
         }
 
         Ok(row)
+    }
+
+    /// Execute this query and return the resulting row or None.
+    /// This method will return an error if more than one row was returned by the query.
+    pub async fn query_opt<C>(&self, client: &C) -> Result<Option<Row>>
+    where
+        C: GenericClient + Sync,
+    {
+        let statement = self.prepare(&client).await?;
+        let rows = client
+            .query_raw(&statement, &self.parameters)
+            .await
+            .map_err(Error::from)?;
+
+        pin_mut!(rows);
+
+        let row = match rows.try_next().await.map_err(Error::from)? {
+            Some(row) => row,
+            None => return Ok(None),
+        };
+
+        if rows.try_next().await.map_err(Error::from)?.is_some() {
+            return Err(Error::TooManyRows.into());
+        }
+
+        Ok(Some(row))
     }
 
     /// Execute this query and return the resulting values as an asynchronous stream of values.
