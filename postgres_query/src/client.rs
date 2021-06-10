@@ -11,7 +11,6 @@ use tokio_postgres::{error::Error as SqlError, Client, RowStream, Statement, Tra
 #[cfg(feature = "deadpool")]
 use deadpool_postgres::{Client as DpClient, ClientWrapper as DpClientWrapper};
 
-
 /// A generic client with basic functionality.
 #[async_trait]
 pub trait GenericClient {
