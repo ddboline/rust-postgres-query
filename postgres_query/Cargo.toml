@@ -1,6 +1,6 @@
 [package]
 name = "postgres_query"
-version = "0.3.4"
+version = "0.3.3"
 authors = ["Christofer Nolander <christofer.nolander@gmail.com>"]
 edition = "2018"
 description = "Write and execute SQL queries with ease"
@@ -19,7 +19,7 @@ path = "examples/basic.rs"
 deadpool = ["deadpool-postgres"]
 
 [dependencies]
-postgres_query_macro = { version = "0.3.4", path = "../postgres_query_macro" }
+postgres_query_macro = { version = "0.3.3", path = "../postgres_query_macro" }
 proc-macro-hack = "0.5"
 postgres-types = "0.2"
 serde = "1.0"
