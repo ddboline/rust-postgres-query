@@ -22,7 +22,7 @@ fn connect() -> Pool {
     if let Some(db) = pgconf.get_dbname() {
         cfg.dbname.replace(db.to_string());
     }
-    cfg.create_pool(tokio_postgres::NoTls).unwrap()
+    cfg.create_pool(None, tokio_postgres::NoTls).unwrap()
 }
 
 #[tokio::test]
