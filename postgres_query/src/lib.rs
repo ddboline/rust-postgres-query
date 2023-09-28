@@ -1055,7 +1055,7 @@ impl Deref for Sql {
     fn deref(&self) -> &Self::Target {
         match self {
             Sql::Static(text) => text,
-            Sql::Dynamic(text) => &text,
+            Sql::Dynamic(text) => text,
         }
     }
 }

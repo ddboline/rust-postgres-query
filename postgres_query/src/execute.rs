@@ -185,7 +185,7 @@ impl<'a> Query<'a> {
     {
         let result = match &self.sql {
             Sql::Static(text) => client.prepare_static(text).await,
-            Sql::Dynamic(text) => client.prepare(&text).await,
+            Sql::Dynamic(text) => client.prepare(text).await,
         };
 
         result.map_err(Error::Sql).map_err(Into::into)

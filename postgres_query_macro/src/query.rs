@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::*;
+use quote::quote;
 use std::fmt::Write;
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
@@ -219,7 +219,7 @@ fn expr_to_argument(expr: Expr) -> Result<Argument> {
         Expr::Reference(ExprReference {
             expr: ref inner, ..
         }) => {
-            if let Some(ident) = expr_as_ident(&inner) {
+            if let Some(ident) = expr_as_ident(inner) {
                 Ok(Argument::Single {
                     ident: ident.clone(),
                     value: expr,
@@ -246,17 +246,14 @@ fn expr_to_argument(expr: Expr) -> Result<Argument> {
 fn path_is_ident(path: &Path) -> bool {
     path.leading_colon.is_none()
         && path.segments.len() == 1
-        && match path.segments[0].arguments {
-            PathArguments::None => true,
-            _ => false,
-        }
+        && matches!(path.segments[0].arguments, PathArguments::None)
 }
 
 fn expr_as_ident(expr: &Expr) -> Option<&Ident> {
     match expr {
         Expr::Path(ExprPath {
             qself: None, path, ..
-        }) if path_is_ident(&path) => Some(&path.segments[0].ident),
+        }) if path_is_ident(path) => Some(&path.segments[0].ident),
         _ => None,
     }
 }

@@ -24,7 +24,7 @@ pub fn parse<'a>(
             let argument = bindings
                 .iter()
                 .position(|(binding, _)| *binding == name)
-                .ok_or_else(|| ParseError::UndefinedBinding { binding: name })?;
+                .ok_or(ParseError::UndefinedBinding { binding: name })?;
 
             let index = param_indices[argument].unwrap_or_else(|| {
                 let (_, value) = bindings[argument];

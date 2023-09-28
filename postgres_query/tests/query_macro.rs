@@ -19,7 +19,7 @@ fn escape_dollar() {
 
 #[test]
 fn parameter_substitution_implicit_name() {
-    let age = 42;
+    let age = 42i64;
     let query = query!("SELECT id, name FROM people WHERE age = $age", age);
 
     assert_eq!(query.sql(), "SELECT id, name FROM people WHERE age = $1");
@@ -28,21 +28,22 @@ fn parameter_substitution_implicit_name() {
 
 #[test]
 fn parameter_substitution_explicit_name() {
-    let query = query!("SELECT id, name FROM people WHERE age = $age", age = 42);
+    let query = query!("SELECT id, name FROM people WHERE age = $age", age = 42i64);
 
     assert_eq!(query.sql(), "SELECT id, name FROM people WHERE age = $1");
-    assert_params_eq(query.parameters(), &[(&42, &Type::INT4)])
+    assert_params_eq(query.parameters(), &[(&42i64, &Type::INT4)])
 }
 
 #[test]
 fn parameter_substitution_multiple_parameters() {
-    let query = query!("$a $b $c", a = 42, b = "John Wick", c = Option::<i32>::None,);
+    let a = 42i64;
+    let query = query!("$a $b $c", a = a, b = "John Wick", c = Option::<i32>::None,);
 
     assert_eq!(query.sql(), "$1 $2 $3");
     assert_params_eq(
         query.parameters(),
         &[
-            (&42, &Type::INT4),
+            (&42i64, &Type::INT4),
             (&"John Wick", &Type::TEXT),
             (&Option::<i32>::None, &Type::INT4),
         ],
@@ -55,7 +56,7 @@ fn dynamic_query() {
 
     let query = query_dyn!(
         &format!("SELECT * FROM people WHERE {}", filters),
-        min_age = 32,
+        min_age = 32i64,
         name = "%John%",
     )
     .unwrap();
@@ -72,7 +73,7 @@ fn dynamic_query_dynamic_bindings() -> Result<()> {
     let mut bindings = Vec::<(&str, Parameter)>::new();
 
     filters.push("age > $min_age");
-    bindings.push(("min_age", &32));
+    bindings.push(("min_age", &32i64));
 
     filters.push("name LIKE $name");
     bindings.push(("name", &"%John%"));
@@ -89,7 +90,7 @@ fn dynamic_query_dynamic_bindings() -> Result<()> {
 
     assert_params_eq(
         query.parameters(),
-        &[(&32, &Type::INT4), (&"%John%", &Type::TEXT)],
+        &[(&32i64, &Type::INT4), (&"%John%", &Type::TEXT)],
     );
 
     Ok(())

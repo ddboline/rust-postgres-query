@@ -37,6 +37,6 @@ pub fn query_dynamic(input: TokenStream) -> TokenStream {
 #[proc_macro_derive(FromSqlRow, attributes(row))]
 pub fn from_sql_row(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let output = from_sql_row::derive(input);
+    let output = from_sql_row::derive(&input);
     TokenStream::from(output)
 }

@@ -5,7 +5,7 @@ mod validate;
 use attrs::{ContainerAttributes, FieldAttributes, MergeKind, PartitionKind};
 use partition::partition_initializers;
 use proc_macro2::{Span, TokenStream};
-use quote::*;
+use quote::quote;
 use syn::{
     spanned::Spanned,
     token::{Enum, Union},
@@ -13,7 +13,7 @@ use syn::{
 };
 use validate::validate_properties;
 
-pub fn derive(input: DeriveInput) -> TokenStream {
+pub fn derive(input: &DeriveInput) -> TokenStream {
     let ident = &input.ident;
 
     let Extractor {
@@ -21,12 +21,12 @@ pub fn derive(input: DeriveInput) -> TokenStream {
         locals,
         columns,
         merge,
-    } = match extract_columns(&input) {
+    } = match extract_columns(input) {
         Ok(columns) => columns,
         Err(e) => return e.to_compile_error(),
     };
 
-    let constructor = make_constructor(&input, locals);
+    let constructor = make_constructor(input, locals);
 
     let multi = merge.map(|merge| make_merge(merge, &constructor, &getters));
 
@@ -217,7 +217,7 @@ fn extract_columns(input: &DeriveInput) -> Result<Extractor> {
     match &input.data {
         Data::Struct(data) => {
             let container = ContainerAttributes::from_attrs(&input.attrs)?;
-            let props = extract_properties(&data)?;
+            let props = extract_properties(data)?;
 
             validate_properties(&container, &props)?;
 
@@ -258,17 +258,11 @@ fn extract_merge(container: &ContainerAttributes, props: &[Property]) -> Option<
         kind: kind.value,
         keys: props
             .iter()
-            .filter_map(|prop| match prop.attrs.key {
-                Some(_) => Some((prop.ident.clone(), prop.ty.clone())),
-                None => None,
-            })
+            .filter_map(|prop| prop.attrs.key.map(|_| (prop.ident.clone(), prop.ty.clone())))
             .collect(),
         collections: props
             .iter()
-            .filter_map(|prop| match prop.attrs.merge {
-                Some(_) => Some((prop.ident.clone(), prop.ty.clone())),
-                None => None,
-            })
+            .filter_map(|prop| prop.attrs.merge.map(|_| (prop.ident.clone(), prop.ty.clone())))
             .collect(),
     })
 }
@@ -295,7 +289,7 @@ fn extract_properties(data: &DataStruct) -> Result<Vec<Property>> {
         let ident = field
             .ident
             .clone()
-            .unwrap_or_else(|| Ident::new(&format!("column_{}", i), Span::call_site()));
+            .unwrap_or_else(|| Ident::new(&format!("column_{i}"), Span::call_site()));
 
         let ty = if attrs.merge.is_some() {
             let base = &field.ty;

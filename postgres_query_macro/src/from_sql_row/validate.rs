@@ -53,7 +53,7 @@ fn check_stride_in_non_exact_container(
     if is_exact {
         Ok(())
     } else {
-        let stride = props.iter().filter_map(|prop| prop.attrs.stride).next();
+        let stride = props.iter().find_map(|prop| prop.attrs.stride);
 
         match stride {
             None => Ok(()),
@@ -110,12 +110,11 @@ fn check_merging_container_attributes(
 fn check_not_key_and_merge(props: &[Property]) -> Result<()> {
     props
         .iter()
-        .map(|prop| match (prop.attrs.key, prop.attrs.merge) {
+        .try_for_each(|prop| match (prop.attrs.key, prop.attrs.merge) {
             (Some(key), Some(merge)) => Err(err!(
                 key.span.join(merge.span).unwrap_or(key.span),
                 "You cannot specify both `#[row(key)]` and `#[row(merge)]` on the same field"
             )),
             _ => Ok(()),
         })
-        .collect()
 }

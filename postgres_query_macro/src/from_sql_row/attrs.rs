@@ -37,7 +37,7 @@ pub enum MergeKind {
 }
 
 impl<T> Attr<T> {
-    pub fn new(span: impl Spanned, value: T) -> Self {
+    pub fn new(span: &impl Spanned, value: T) -> Self {
         Attr {
             span: span.span(),
             value,
@@ -175,7 +175,7 @@ impl ContainerAttributes {
                         set_or_err!(merge, kind, err_multiple_partition!(item))?;
                     }
                 },
-            })
+            });
         }
 
         let container = ContainerAttributes { partition, merge };
@@ -203,7 +203,7 @@ impl FieldAttributes {
             match_item!((item) {
                 "flatten" => {
                     Path(_) => {
-                        set_or_err!(flatten, true, err_duplicate_attribute!(item, "flatten"))?
+                        set_or_err!(flatten, true, err_duplicate_attribute!(item, "flatten"))?;
                     }
                 },
                 "rename" => {
@@ -222,22 +222,22 @@ impl FieldAttributes {
                     NameValue(pair) => {
                         let step = lit_int(&pair.lit)?;
                         let step = Attr::new(pair, step);
-                        set_or_err!(stride, step, err_duplicate_attribute!(item, "stride"))?
+                        set_or_err!(stride, step, err_duplicate_attribute!(item, "stride"))?;
                     }
                 },
                 "key" => {
                     Path(_) => {
                         let attr = Attr::new(item, ());
-                        set_or_err!(key, attr, err_duplicate_attribute!(item, "key"))?
+                        set_or_err!(key, attr, err_duplicate_attribute!(item, "key"))?;
                     }
                 },
                 "merge" => {
                     Path(_) => {
                         let attr = Attr::new(item, ());
-                        set_or_err!(merge, attr, err_duplicate_attribute!(item, "merge"))?
+                        set_or_err!(merge, attr, err_duplicate_attribute!(item, "merge"))?;
                     }
                 },
-            })
+            });
         }
 
         let field = FieldAttributes {
@@ -265,10 +265,7 @@ fn attribute_items<'a>(
         }
 
         let meta = attr.parse_meta()?;
-        let list = match meta {
-            Meta::List(list) => list,
-            _ => return Err(err!(attr, "expected list: #[row(...)]")),
-        };
+        let Meta::List(list) = meta else {return Err(err!(attr, "expected list: #[row(...)]"))};
 
         for inner in list.nested {
             match inner {

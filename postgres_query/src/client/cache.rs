@@ -173,7 +173,7 @@ where
         match self {
             DynamicCache::Linear(pairs) => pairs
                 .iter()
-                .find(|(key, _)| K::eq(key, &index))
+                .find(|(key, _)| K::eq(key, index))
                 .map(|(_, value)| value),
             DynamicCache::Hash(map) => map.get(index),
         }
