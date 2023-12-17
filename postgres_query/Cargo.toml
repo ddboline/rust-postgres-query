@@ -27,7 +27,7 @@ tokio-postgres = "0.7"
 futures = "0.3"
 async-trait = "0.1"
 thiserror = "1.0"
-deadpool-postgres = { version = "0.11", optional = true, default-features = false }
+deadpool-postgres = { version = "0.12", optional = true, default-features = false }
 
 [dev-dependencies]
 bytes = "1.0"

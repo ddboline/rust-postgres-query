@@ -1082,7 +1082,7 @@ mod tests {
 
     #[test]
     fn parse_query_single_binding() {
-        let query = Query::parse("SELECT $number", &[("number", &123)]).unwrap();
+        let query = Query::parse("SELECT $number", &[("number", &123 as Parameter)]).unwrap();
         assert_eq!(query.sql(), "SELECT $1");
     }
 
