@@ -265,7 +265,9 @@ fn attribute_items<'a>(
         }
 
         let meta = attr.parse_meta()?;
-        let Meta::List(list) = meta else {return Err(err!(attr, "expected list: #[row(...)]"))};
+        let Meta::List(list) = meta else {
+            return Err(err!(attr, "expected list: #[row(...)]"));
+        };
 
         for inner in list.nested {
             match inner {

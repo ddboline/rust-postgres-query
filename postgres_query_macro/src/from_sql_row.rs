@@ -258,11 +258,19 @@ fn extract_merge(container: &ContainerAttributes, props: &[Property]) -> Option<
         kind: kind.value,
         keys: props
             .iter()
-            .filter_map(|prop| prop.attrs.key.map(|_| (prop.ident.clone(), prop.ty.clone())))
+            .filter_map(|prop| {
+                prop.attrs
+                    .key
+                    .map(|_| (prop.ident.clone(), prop.ty.clone()))
+            })
             .collect(),
         collections: props
             .iter()
-            .filter_map(|prop| prop.attrs.merge.map(|_| (prop.ident.clone(), prop.ty.clone())))
+            .filter_map(|prop| {
+                prop.attrs
+                    .merge
+                    .map(|_| (prop.ident.clone(), prop.ty.clone()))
+            })
             .collect(),
     })
 }

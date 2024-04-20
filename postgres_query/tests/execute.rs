@@ -787,17 +787,17 @@ async fn optional_flatten_invalid_type() -> Result {
     #[derive(FromSqlRow, Clone)]
     #[row(split)]
     struct Family {
-        #[row(flatten, split = "id", rename="child")]
+        #[row(flatten, split = "id", rename = "child")]
         _child: Person,
-        #[row(flatten, split = "id", rename="father")]
+        #[row(flatten, split = "id", rename = "father")]
         _father: Option<Person>,
     }
 
     #[derive(FromSqlRow, Clone)]
     struct Person {
-        #[row(rename="id")]
+        #[row(rename = "id")]
         _id: i32,
-        #[row(rename="name")]
+        #[row(rename = "name")]
         _name: String,
     }
 

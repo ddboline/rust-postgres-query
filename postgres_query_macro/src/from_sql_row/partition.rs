@@ -46,8 +46,8 @@ pub(super) fn partition_initializers(
 
 mod exact {
     use super::{
-        Property, Result, ExactPartition, Index, quote,
-        TokenStream, Local, Ident, field_initializers, Span
+        field_initializers, quote, ExactPartition, Ident, Index, Local, Property, Result, Span,
+        TokenStream,
     };
 
     pub(super) fn partition(props: Vec<Property>) -> Result<Vec<ExactPartition>> {
@@ -149,10 +149,7 @@ mod exact {
 }
 
 mod split {
-    use super::{
-        Property, Split, mem, TokenStream, Local, Ident, Span,
-        quote, field_initializers
-    };
+    use super::{field_initializers, mem, quote, Ident, Local, Property, Span, Split, TokenStream};
 
     pub(super) fn partition(props: Vec<Property>) -> Vec<Split> {
         let mut splits = Vec::new();
