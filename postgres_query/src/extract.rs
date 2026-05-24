@@ -117,7 +117,7 @@ pub trait Row: private::row::Sealed {
     }
 
     /// Return a subslice of this row's columns.
-    fn slice(&self, range: Range<usize>) -> Result<RowSlice<Self>, Error>
+    fn slice(&self, range: Range<usize>) -> Result<RowSlice<'_, Self>, Error>
     where
         Self: Sized,
     {
@@ -288,7 +288,7 @@ where
     ///
     /// This is an optimized version of `Row::slice` which reduces the number of
     /// pointer-indirections.
-    pub fn slice(&self, range: Range<usize>) -> Result<RowSlice<R>, Error>
+    pub fn slice(&self, range: Range<usize>) -> Result<RowSlice<'_, R>, Error>
     where
         Self: Sized,
     {

@@ -1,6 +1,6 @@
 [package]
 name = "postgres_query"
-version = "0.3.8"
+version = "0.3.9"
 authors = ["Christofer Nolander <christofer.nolander@gmail.com>"]
 edition = "2018"
 description = "Write and execute SQL queries with ease"
@@ -26,11 +26,11 @@ serde = "1.0"
 tokio-postgres = "0.7"
 futures = "0.3"
 async-trait = "0.1"
-thiserror = "1.0"
+thiserror = "2.0"
 deadpool-postgres = { version = "0.14", optional = true, default-features = false }
 
 [dev-dependencies]
 bytes = "1.0"
-tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.52", features = ["macros", "rt-multi-thread"] }
 structopt = "0.3"
 anyhow = "1.0"

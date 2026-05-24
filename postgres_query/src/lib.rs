@@ -1044,7 +1044,7 @@ impl<'a> Query<'a> {
 
     /// Get the parameters of this query in the order expected by the query returned by
     /// `Query::sql`.
-    pub fn parameters(&'a self) -> &[Parameter<'a>] {
+    pub fn parameters(&'a self) -> &'a [Parameter<'a>] {
         &self.parameters
     }
 }
